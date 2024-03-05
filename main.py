@@ -25,18 +25,15 @@ def start():
     driver = webdriver.Chrome(options=options)
     driver.get("https://www.bahn.de/")
     driver.implicitly_wait(1.5)
-       
+
+
+    preparationSearch(driver)
     
-    removeCookieBanner(driver)
-    openBahnStartseite(driver)
-
-
-    changeOpen(driver)
-
     time.sleep(1)
 
-
-    setDate(driver, 7, 5)
+    
+    changeOpen(driver) 
+    
     setDeparture(driver, depature)        
     setDestination(driver, destination)
 
@@ -54,6 +51,16 @@ def start():
 
 
 
+def preparationSearch(driver):
+
+    removeCookieBanner(driver)
+    openBahnStartseite(driver)
+    time.sleep(1)
+       
+    changeOpen(driver)
+    setDate(driver, 7, 5)
+           
+    changeDone(driver)
 
     
 
