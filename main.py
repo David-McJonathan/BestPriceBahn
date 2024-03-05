@@ -36,7 +36,7 @@ def start():
     time.sleep(1)
 
 
-    setDate(driver, date)
+    setDate(driver, 7, 5)
     setDeparture(driver, depature)        
     setDestination(driver, destination)
 
@@ -102,15 +102,13 @@ def changeOpen(driver):
 def changeDone(driver):
 
     driver.find_element(by=By.CLASS_NAME, value="db-web-button.test-db-web-button.db-web-button--type-primary.db-web-button--size-large.quick-finder-basic__search-btn.quick-finder-basic__search-btn--desktop").click()
-    
 
 
 
-def setDate(driver, date):
+def setDate(driver, month, day):
 
-    month = 5
-    day = 5
 
+    monthNow = datetime.datetime.now().date().month
 
     driver.find_element(by=By.CLASS_NAME, value="open-overlay-button.button-overlay__button").click()
 
@@ -119,7 +117,7 @@ def setDate(driver, date):
     month_Button = driver.find_element(by=By.CLASS_NAME, value="db-web-button.test-db-web-button.db-web-button--type-text.db-web-button--size-large.db-web-button--type-plain.db-web-date-picker-month-bar__right-handle")
 
 
-    for i in range(month):
+    for i in range(month - monthNow):
 
         month_Button.click()
         time.sleep(0.01)
@@ -128,10 +126,11 @@ def setDate(driver, date):
     active_Slider = driver.find_element(by=By.CLASS_NAME, value="swiper-slide.swiper-slide-active")
     days_Button = active_Slider.find_elements(by=By.CLASS_NAME, value="db-web-date-picker-calendar-day.db-web-date-picker-calendar-day--day-in-month-or-selectable")
 
-    days_Button[day].click()
+    days_Button[day-1].click()
     time.sleep(0.25)
 
     driver.find_element(by=By.CLASS_NAME, value="quick-finder-overlay-control-buttons.quick-finder-zeitauswahl-content__control-buttons").click()
+
 
 
 
