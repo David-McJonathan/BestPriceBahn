@@ -3,6 +3,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 
+import time
+import datetime
+
 
 def start():
 
@@ -36,11 +39,9 @@ def start():
 
     changeDone(driver)
 
+
     getBestpreis(driver)
-  
-
-
-    
+           
 
 
 
@@ -59,8 +60,26 @@ def removeCookieBanner(driver):
 
 def openBahnStartseite (driver):
 
-    print("ToDo: openBahnStartseite")
+    
+  
+    time.sleep(2)
+
+    departure_Box = driver.find_element(by=By.CLASS_NAME, value="db-web-autocomplete.quick-finder-basic__stations-von-halt.test-von-halt").find_element(By.CSS_SELECTOR, "input")
+    destination_Box = driver.find_element(by=By.CLASS_NAME, value="db-web-autocomplete.quick-finder-basic__stations-nach-halt.test-nach-halt").find_element(By.CSS_SELECTOR, "input")
+    button_Search = driver.find_element(by=By.CLASS_NAME, value="db-web-button.test-db-web-button.db-web-button--type-primary.db-web-button--size-large.quick-finder-basic__search-btn.quick-finder-basic__search-btn--desktop")#.find_element(By.CSS_SELECTOR, "button")
+
+
+    departure_Box.send_keys("Hamburg Hbf")
+    destination_Box.send_keys("Köln hbf")
+    driver.find_element(by=By.CLASS_NAME, value="db-web-autocomplete.quick-finder-basic__stations-von-halt.test-von-halt").click()
+
+    time.sleep(1)
+
+    button_Search.click()
+    
+    time.sleep(3)
    
+    
 
 def changeOpen(driver):
     
@@ -70,6 +89,7 @@ def changeOpen(driver):
 def changeDone(driver):
 
     print("ToDo: changeDone")    
+
 
 
 def setDate(driver, date):
@@ -82,6 +102,7 @@ def setDeparture(driver, city):
     print("ToDo: setDeparture")
 
 
+
 def setDestination(driver, city):
 
    print("ToDo: setDestination")
@@ -90,13 +111,15 @@ def setDestination(driver, city):
 
 def getBestpreis(driver):
 
-    print("ToDo: getBestpreis")
+
+   print("ToDo: setDestination")
 
 
 
 def convertElementToFloat(str):
 
-    print("ToDo: convertElementToFloat")
+ 
+   print("ToDo: convertElementToFloat")   
 
    
 
