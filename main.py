@@ -14,7 +14,7 @@ def start():
 
 
     depature = "Hamburg Hbf"
-    destination = "Frankfurt Hbf"
+    destinations = ["München Hbf", "Berlin Hbf", "Mainz Hbf", "Frankfurt Hbf"]
     date = ""
 
     options = ChromeOptions()
@@ -32,21 +32,21 @@ def start():
     time.sleep(1)
 
     
-    changeOpen(driver) 
-    
-    setDeparture(driver, depature)        
-    setDestination(driver, destination)
+    for destination in destinations:
 
-    changeDone(driver)
+        changeOpen(driver)
 
+        setDeparture(driver, depature)        
+        setDestination(driver, destination)       
+        time.sleep(1)
+        
+        changeDone(driver)
+        
+        time.sleep(3)
 
-    time.sleep(2)
-
-    activeBestpreis(driver)
-
-    prices = getBestpreis(driver)
-
-    sendSQL(depature, destination, prices)
+        activeBestpreis(driver)
+        prices = getBestpreis(driver)
+        sendSQL(depature, destination, prices)
 
 
 
