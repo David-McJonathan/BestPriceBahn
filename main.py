@@ -48,10 +48,10 @@ def start():
     activeBestpreis(driver)
 
     prices = getBestpreis(driver)
-       
 
-    for e in prices:
-        print(convertElementToFloat(e))
+    sendSQL(depature, destination, prices)
+
+
 
 
 
@@ -170,6 +170,18 @@ def getBestpreis(driver):
     return prices
 
 
+
+def sendSQL(depature, destination, prices):
+
+    if len(prices) > 0:
+
+        print("(dummy) Sending to SQL-Database...")        
+        print("(" + depature +") --> (" + destination + ")")
+
+        for e in prices:
+            print(convertElementToFloat(e))
+
+        print("... Finish sending to SQL-Database")
 
 
 def convertElementToFloat(str):
