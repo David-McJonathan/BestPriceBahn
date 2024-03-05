@@ -45,6 +45,8 @@ def start():
 
     time.sleep(2)
 
+    activeBestpreis(driver)
+
     prices = getBestpreis(driver)
        
 
@@ -146,7 +148,17 @@ def setDestination(driver, city):
 
 
 
+def activeBestpreis(driver):
 
+
+    if not driver.find_element(by=By.CLASS_NAME, value="db-web-switch-list__input").is_selected():
+
+        try:
+            driver.find_element(by=By.CLASS_NAME, value="db-web-switch-list--compact.db-web-switch-list.tagesbestpreis-toggle__switch").click()       
+            time.sleep(1)
+
+        except:
+            print("---Not posible to active Bestpreis Switch---")
 
 
 def getBestpreis(driver):
