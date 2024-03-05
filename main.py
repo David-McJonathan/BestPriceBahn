@@ -33,12 +33,17 @@ def start():
 
     changeOpen(driver)
 
+    time.sleep(1)
+
+
     setDate(driver, date)
     setDeparture(driver, depature)        
     setDestination(driver, destination)
 
     changeDone(driver)
 
+
+    time.sleep(2)
 
     prices = getBestpreis(driver)
        
@@ -87,21 +92,46 @@ def openBahnStartseite (driver):
     time.sleep(3)
    
     
-
 def changeOpen(driver):
     
-    print("ToDo: changeOpen")
+    driver.find_element(by=By.CLASS_NAME, value="reise-daten-zusammenfassung__button").click()
 
 
 def changeDone(driver):
 
-    print("ToDo: changeDone")    
+    driver.find_element(by=By.CLASS_NAME, value="db-web-button.test-db-web-button.db-web-button--type-primary.db-web-button--size-large.quick-finder-basic__search-btn.quick-finder-basic__search-btn--desktop").click()
+    
 
 
 
 def setDate(driver, date):
 
-    print("ToDo: setDate")
+    month = 5
+    day = 5
+
+
+    driver.find_element(by=By.CLASS_NAME, value="open-overlay-button.button-overlay__button").click()
+
+    time.sleep(0.25)
+
+    month_Button = driver.find_element(by=By.CLASS_NAME, value="db-web-button.test-db-web-button.db-web-button--type-text.db-web-button--size-large.db-web-button--type-plain.db-web-date-picker-month-bar__right-handle")
+
+
+    for i in range(month):
+
+        month_Button.click()
+        time.sleep(0.01)
+
+    
+    active_Slider = driver.find_element(by=By.CLASS_NAME, value="swiper-slide.swiper-slide-active")
+    days_Button = active_Slider.find_elements(by=By.CLASS_NAME, value="db-web-date-picker-calendar-day.db-web-date-picker-calendar-day--day-in-month-or-selectable")
+
+    days_Button[day].click()
+    time.sleep(0.25)
+
+    driver.find_element(by=By.CLASS_NAME, value="quick-finder-overlay-control-buttons.quick-finder-zeitauswahl-content__control-buttons").click()
+
+
 
 
 def setDeparture(driver, city):
