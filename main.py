@@ -11,9 +11,8 @@ def start():
 
 
     print("Welcome to the search for the best train price")
-
-
-    depature = "Hamburg Hbf"
+    
+    depature = str(input('Enter a different departure station (or skip): ') or "Hamburg Hbf")
     destinations = ["München Hbf", "Berlin Hbf", "Mainz Hbf", "Frankfurt Hbf"]
     date = ""
 
