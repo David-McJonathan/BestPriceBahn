@@ -40,8 +40,15 @@ def start():
     changeDone(driver)
 
 
-    getBestpreis(driver)
-           
+    prices = getBestpreis(driver)
+       
+
+    for e in prices:
+        print(convertElementToFloat(e))
+
+
+
+    
 
 
 
@@ -109,17 +116,27 @@ def setDestination(driver, city):
 
 
 
+
+
+
 def getBestpreis(driver):
 
+    driver.implicitly_wait(3)
 
-   print("ToDo: setDestination")
+    prices = driver.find_elements(By.CLASS_NAME, "reise-preis__preis")
+
+    return prices
+
 
 
 
 def convertElementToFloat(str):
 
- 
-   print("ToDo: convertElementToFloat")   
+    strNumber = str.text[3:-2]
+    strNumber = strNumber.replace(',', '.')
+    floNumber = float(strNumber)
+
+    return floNumber
 
    
 
