@@ -4,8 +4,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 
 import time
-import datetime
+from datetime import datetime
 
+import sqlDB
 
 def start():
 
@@ -31,6 +32,8 @@ def start():
        
     driver.implicitly_wait(5)
 
+    tripDate = datetime.now()
+
 
     for destination in destinations:
 
@@ -46,7 +49,7 @@ def start():
 
         activeBestpreis(driver)
         prices = getBestpreis(driver)
-        sendSQL(depature, destination, prices)
+        sendSQL(depature, destination, tripDate, prices)
 
 
     
@@ -114,7 +117,7 @@ def changeDone(driver):
 def setDate(driver, month, day):
 
 
-    monthNow = datetime.datetime.now().date().month
+    monthNow = datetime.now().date().month
 
     driver.find_element(by=By.CLASS_NAME, value="open-overlay-button.button-overlay__button").click()
 
@@ -193,9 +196,21 @@ def getBestpreis(driver):
 
 
 
-def sendSQL(depature, destination, prices):
+def sendSQL(depature, destination, tripDate, prices):
+    """
+    Send data to DB
+    :param depature:
+    :param destination:
+    :param tripDate:
+    :param checkDate:
+    :param prices:
+    """
 
     if len(prices) > 0:
+
+        checkDate = datetime.now()
+
+        sqlDB.sendSQLdata(depature,destination,tripDate,checkDate,(1,2,3))
 
         print("(dummy) Sending to SQL-Database...")        
         print("(" + depature +") --> (" + destination + ")")
