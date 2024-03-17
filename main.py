@@ -4,8 +4,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 
 import time
-import datetime
+from datetime import datetime, timedelta
 
+import sqlDB
 
 def start():
 
@@ -13,8 +14,12 @@ def start():
     print("Welcome to the search for the best train price")
 
     depature = str(input('Enter a different departure station (or skip): ') or "Hamburg Hbf")
-    destinations = ["München Hbf", "Berlin Hbf", "Mainz Hbf", "Frankfurt Hbf"]
+    destinations = ["München Hbf", "Köln Hbf", "Frankfurt Hbf"]
 
+    searchDays = 21
+
+
+    connection = sqlDB.startSQLdb()
 
     options = ChromeOptions()
 #    options.add_argument("--headless=new")
@@ -22,17 +27,22 @@ def start():
 #    driver.get_screenshot_as_file("screenshot.png")
     
     driver = webdriver.Chrome(options=options)
-    driver.get("https://www.bahn.de/")
-    driver.implicitly_wait(1.5)
-       
     
-    preparationSearch(driver)
-
-       
-    driver.implicitly_wait(5)
+    #TODO: 1.1 Fix month counter
 
 
     for destination in destinations:
+
+        #TODO: 1.2 Remove webseide and preparationSearch from loop
+        driver.get("https://www.bahn.de/")
+        driver.implicitly_wait(1.5)
+        
+        
+        preparationSearch(driver)
+
+        
+        driver.implicitly_wait(5)
+
 
         changeOpen(driver)
 
@@ -42,11 +52,35 @@ def start():
         
         changeDone(driver)
         
-        time.sleep(3)
+        print(destination)
 
-        activeBestpreis(driver)
-        prices = getBestpreis(driver)
-        sendSQL(depature, destination, prices)
+        for d in range(searchDays):
+
+
+            date = datetime.now().date().today() + timedelta(days = d)
+
+            changeOpen(driver)
+
+            #print(date)
+            #print("counter" + str(d))
+
+            #print(date.month)
+            #print(date.day)
+
+            setDate(driver, date.month, date.day)      
+            time.sleep(1)
+        
+            changeDone(driver)
+
+
+            time.sleep(3)
+            
+            activeBestpreis(driver)
+            prices = getBestpreis(driver)
+            
+            
+            sendSQL(connection, depature, destination, date, prices)
+
 
 
     
@@ -56,10 +90,10 @@ def preparationSearch(driver):
     openBahnStartseite(driver)
     time.sleep(1)
        
-    changeOpen(driver)
-    setDate(driver, 7, 5)
+   # changeOpen(driver)
+   # setDate(driver, 7, 5)
            
-    changeDone(driver)
+   # changeDone(driver)
 
 
 
@@ -112,9 +146,14 @@ def changeDone(driver):
 
 
 def setDate(driver, month, day):
+    """
+    Change Date
+    :param driver: driver
+    :param month: month in int
+    :param day: day in int
+    """
 
-
-    monthNow = datetime.datetime.now().date().month
+    monthNow = datetime.now().date().month
 
     driver.find_element(by=By.CLASS_NAME, value="open-overlay-button.button-overlay__button").click()
 
@@ -122,7 +161,7 @@ def setDate(driver, month, day):
 
     month_Button = driver.find_element(by=By.CLASS_NAME, value="db-web-button.test-db-web-button.db-web-button--type-text.db-web-button--size-large.db-web-button--type-plain.db-web-date-picker-month-bar__right-handle")
 
-
+    #TODO: 1.3 Fix month counter. Check > or < to move WebElement
     for i in range(month - monthNow):
 
         month_Button.click()
@@ -132,7 +171,11 @@ def setDate(driver, month, day):
     active_Slider = driver.find_element(by=By.CLASS_NAME, value="swiper-slide.swiper-slide-active")
     days_Button = active_Slider.find_elements(by=By.CLASS_NAME, value="db-web-date-picker-calendar-day.db-web-date-picker-calendar-day--day-in-month-or-selectable")
 
-    days_Button[day-1].click()
+    try:
+        days_Button[day-1].click()
+    except:
+        print("---Daysnot click able---")
+
     time.sleep(0.25)
 
     driver.find_element(by=By.CLASS_NAME, value="quick-finder-overlay-control-buttons.quick-finder-zeitauswahl-content__control-buttons").click()
@@ -140,6 +183,12 @@ def setDate(driver, month, day):
 
 
 def setDeparture(driver, city):
+    """
+    Set Departure
+    :param driver: driver
+    :param city: city in String
+    """
+
 
     departure_Box = driver.find_element(by=By.CLASS_NAME, value="db-web-autocomplete.quick-finder-basic__stations-von-halt.test-von-halt").find_element(By.CSS_SELECTOR, "input")
     
@@ -153,6 +202,12 @@ def setDeparture(driver, city):
 
 
 def setDestination(driver, city):
+    """
+    Set Destination
+    :param driver: driver
+    :param city: city in String
+    """
+
 
     destination_Box = driver.find_element(by=By.CLASS_NAME, value="db-web-autocomplete.quick-finder-basic__stations-nach-halt.test-nach-halt").find_element(By.CSS_SELECTOR, "input")
       
@@ -186,24 +241,47 @@ def getBestpreis(driver):
 
     driver.implicitly_wait(3)
 
-    prices = driver.find_elements(By.CLASS_NAME, "tagesbestpreis-intervall__button-text")
+    pricesFloat = []
 
-    return prices
-
-
-
-
-def sendSQL(depature, destination, prices):
-
-    if len(prices) > 0:
-
-        print("(dummy) Sending to SQL-Database...")        
-        print("(" + depature +") --> (" + destination + ")")
+    try:
+        prices = driver.find_elements(By.CLASS_NAME, "tagesbestpreis-intervall__button-text")
 
         for e in prices:
-            print(convertElementToFloat(e))
+            pricesFloat.append(convertElementToFloat(e))
+        
 
-        print("... Finish sending to SQL-Database")
+    except:
+            print("---Not posible to get Bestpreis---")
+
+    return pricesFloat
+
+    
+
+
+
+
+
+def sendSQL(connection, depature, destination, tripDate, prices):
+    """
+    Send data to DB
+    :param connection: connection to the db
+    :param depature: as String
+    :param destination: as String
+    :param tripDate: as String
+    :param checkDate: as String
+    :param preis: as Float array
+    """
+
+    if len(prices) == 6:
+
+        checkDate = datetime.now()
+
+        data = (depature, destination, tripDate, checkDate, prices[0], prices[1], prices[2], prices[3], prices[4], prices[5])
+
+        with connection:            
+            sqlDB.sendSQLdata(connection, data)
+
+
 
 
 
