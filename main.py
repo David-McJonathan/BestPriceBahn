@@ -232,24 +232,16 @@ def sendSQL(connection, depature, destination, tripDate, prices):
     :param preis: as Float array
     """
 
-    if len(prices) > 0:
+    if len(prices) == 6:
 
         checkDate = datetime.now()
 
-        data = (depature, destination, tripDate, checkDate, prices[0], prices[1], prices[2], prices[3], prices[4])
+        data = (depature, destination, tripDate, checkDate, prices[0], prices[1], prices[2], prices[3], prices[4], prices[5])
 
-        with connection:
+        with connection:            
             sqlDB.sendSQLdata(connection, data)
 
 
-
-
-
-        print("(dummy) Sending to SQL-Database...")        
-        print("(" + depature +") --> (" + destination + ")")
-
-
-        print("... Finish sending to SQL-Database")
 
 
 

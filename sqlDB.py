@@ -25,7 +25,8 @@ def createDatabase(connection):
                                         preis_2 integer NOT NULL,
                                         preis_3 integer NOT NULL,
                                         preis_4 integer NOT NULL,
-                                        preis_5 integer NOT NULL
+                                        preis_5 integer NOT NULL,
+                                        preis_6 integer NOT NULL
                                     ); """
 
     
@@ -64,8 +65,8 @@ def sendSQLdata(connection, data):
 
     """
 
-    sql = ''' INSERT INTO strecke(depature,destination,tripDate,checkDate,preis_1,preis_2,preis_3,preis_4,preis_5)
-              VALUES(?,?,?,?,?,?,?,?,?) '''
+    sql = ''' INSERT INTO strecke(depature,destination,tripDate,checkDate,preis_1,preis_2,preis_3,preis_4,preis_5,preis_6)
+              VALUES(?,?,?,?,?,?,?,?,?,?) '''
     
     cur = connection.cursor()
     cur.execute(sql, data)
