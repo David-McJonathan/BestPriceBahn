@@ -17,15 +17,15 @@ def createDatabase(connection):
 
     sqlCreateTable = """ CREATE TABLE IF NOT EXISTS strecke (
                                         id integer PRIMARY KEY,
-                                        start text NOT NULL,
-                                        ziel text NOT NULL
+                                        depature text NOT NULL,
+                                        destination text NOT NULL,
                                         tripDate text NOT NULL,
                                         checkDate text NOT NULL,
                                         preis_1 integer NOT NULL,
                                         preis_2 integer NOT NULL,
                                         preis_3 integer NOT NULL,
                                         preis_4 integer NOT NULL,
-                                        preis_5 integer NOT NULL,
+                                        preis_5 integer NOT NULL
                                     ); """
 
     
@@ -59,11 +59,9 @@ def startSQLdb():
 def sendSQLdata(connection, data):
     """
     Create a new colum into the table
-    :param depature: as String
-    :param destination: as String
-    :param tripDate: as String
-    :param checkDate: as String
-    :param preis: as int array
+    :param connection: as String
+    :param data: as String
+
     """
 
     sql = ''' INSERT INTO strecke(depature,destination,tripDate,checkDate,preis_1,preis_2,preis_3,preis_4,preis_5)
