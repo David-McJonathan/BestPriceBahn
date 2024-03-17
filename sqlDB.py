@@ -42,6 +42,7 @@ def createDatabase(connection):
 
 
 
+
 def startSQLdb():
 
     database = "database-BahnPreis.db"
@@ -50,18 +51,30 @@ def startSQLdb():
 
     createDatabase(connection)
 
+    return connection
 
 
 
-def sendSQLdata(depature, destination, tripDate, checkDate, preis):
+
+def sendSQLdata(connection, data):
     """
     Create a new colum into the table
-    :param depature:
-    :param destination:
-    :param tripDate:
-    :param checkDate:
-    :param preis:
+    :param depature: as String
+    :param destination: as String
+    :param tripDate: as String
+    :param checkDate: as String
+    :param preis: as int array
     """
+
+    sql = ''' INSERT INTO strecke(depature,destination,tripDate,checkDate,preis_1,preis_2,preis_3,preis_4,preis_5)
+              VALUES(?,?,?,?,?,?,?,?,?) '''
+    
+    cur = connection.cursor()
+    cur.execute(sql, data)
+    connection.commit()
+    return cur.lastrowid
+
+
 
 
     print(depature + destination + str(tripDate) + str(checkDate))

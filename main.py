@@ -17,6 +17,8 @@ def start():
     destinations = ["München Hbf", "Berlin Hbf", "Mainz Hbf", "Frankfurt Hbf"]
 
 
+    connection = sqlDB.startSQLdb()
+
     options = ChromeOptions()
 #    options.add_argument("--headless=new")
 #    options.add_argument("--window-size=1920,1080")
@@ -49,7 +51,7 @@ def start():
 
         activeBestpreis(driver)
         prices = getBestpreis(driver)
-        sendSQL(depature, destination, tripDate, prices)
+        sendSQL(connection, depature, destination, tripDate, prices)
 
 
     
@@ -213,21 +215,29 @@ def getBestpreis(driver):
 
 
 
-def sendSQL(depature, destination, tripDate, prices):
+def sendSQL(connection, depature, destination, tripDate, prices):
     """
     Send data to DB
-    :param depature:
-    :param destination:
-    :param tripDate:
-    :param checkDate:
-    :param prices:
+    :param connection: connection to the db
+    :param depature: as String
+    :param destination: as String
+    :param tripDate: as String
+    :param checkDate: as String
+    :param preis: as int array
     """
 
     if len(prices) > 0:
 
         checkDate = datetime.now()
 
-        sqlDB.sendSQLdata(depature,destination,tripDate,checkDate,(1,2,3))
+        data = (depature, destination, tripDate, checkDate, prices[0], prices[1], prices[2], prices[3], prices[4])
+
+        with connection:
+            sqlDB.sendSQLdata(connection, data)
+
+
+
+
 
         print("(dummy) Sending to SQL-Database...")        
         print("(" + depature +") --> (" + destination + ")")
