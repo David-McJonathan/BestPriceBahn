@@ -4,7 +4,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import sqlDB
 
@@ -14,7 +14,9 @@ def start():
     print("Welcome to the search for the best train price")
 
     depature = str(input('Enter a different departure station (or skip): ') or "Hamburg Hbf")
-    destinations = ["München Hbf", "Berlin Hbf", "Mainz Hbf", "Frankfurt Hbf"]
+    destinations = ["München Hbf", "Köln Hbf", "Frankfurt Hbf"]
+
+    searchDays = 21
 
 
     connection = sqlDB.startSQLdb()
@@ -25,19 +27,22 @@ def start():
 #    driver.get_screenshot_as_file("screenshot.png")
     
     driver = webdriver.Chrome(options=options)
-    driver.get("https://www.bahn.de/")
-    driver.implicitly_wait(1.5)
-       
     
-    preparationSearch(driver)
-
-       
-    driver.implicitly_wait(5)
-
-    tripDate = datetime.now()
+    #TODO: 1.1 Fix month counter
 
 
     for destination in destinations:
+
+        #TODO: 1.2 Remove webseide and preparationSearch from loop
+        driver.get("https://www.bahn.de/")
+        driver.implicitly_wait(1.5)
+        
+        
+        preparationSearch(driver)
+
+        
+        driver.implicitly_wait(5)
+
 
         changeOpen(driver)
 
@@ -47,11 +52,35 @@ def start():
         
         changeDone(driver)
         
-        time.sleep(3)
+        print(destination)
 
-        activeBestpreis(driver)
-        prices = getBestpreis(driver)
-        sendSQL(connection, depature, destination, tripDate, prices)
+        for d in range(searchDays):
+
+
+            date = datetime.now().date().today() + timedelta(days = d)
+
+            changeOpen(driver)
+
+            #print(date)
+            #print("counter" + str(d))
+
+            #print(date.month)
+            #print(date.day)
+
+            setDate(driver, date.month, date.day)      
+            time.sleep(1)
+        
+            changeDone(driver)
+
+
+            time.sleep(3)
+            
+            activeBestpreis(driver)
+            prices = getBestpreis(driver)
+            
+            
+            sendSQL(connection, depature, destination, date, prices)
+
 
 
     
@@ -61,10 +90,10 @@ def preparationSearch(driver):
     openBahnStartseite(driver)
     time.sleep(1)
        
-    changeOpen(driver)
-    setDate(driver, 7, 5)
+   # changeOpen(driver)
+   # setDate(driver, 7, 5)
            
-    changeDone(driver)
+   # changeDone(driver)
 
 
 
@@ -132,7 +161,7 @@ def setDate(driver, month, day):
 
     month_Button = driver.find_element(by=By.CLASS_NAME, value="db-web-button.test-db-web-button.db-web-button--type-text.db-web-button--size-large.db-web-button--type-plain.db-web-date-picker-month-bar__right-handle")
 
-
+    #TODO: 1.3 Fix month counter. Check > or < to move WebElement
     for i in range(month - monthNow):
 
         month_Button.click()
@@ -142,7 +171,11 @@ def setDate(driver, month, day):
     active_Slider = driver.find_element(by=By.CLASS_NAME, value="swiper-slide.swiper-slide-active")
     days_Button = active_Slider.find_elements(by=By.CLASS_NAME, value="db-web-date-picker-calendar-day.db-web-date-picker-calendar-day--day-in-month-or-selectable")
 
-    days_Button[day-1].click()
+    try:
+        days_Button[day-1].click()
+    except:
+        print("---Daysnot click able---")
+
     time.sleep(0.25)
 
     driver.find_element(by=By.CLASS_NAME, value="quick-finder-overlay-control-buttons.quick-finder-zeitauswahl-content__control-buttons").click()
@@ -208,15 +241,22 @@ def getBestpreis(driver):
 
     driver.implicitly_wait(3)
 
-    prices = driver.find_elements(By.CLASS_NAME, "tagesbestpreis-intervall__button-text")
-
     pricesFloat = []
 
-    for e in prices:
-        pricesFloat.append(convertElementToFloat(e))
+    try:
+        prices = driver.find_elements(By.CLASS_NAME, "tagesbestpreis-intervall__button-text")
 
+        for e in prices:
+            pricesFloat.append(convertElementToFloat(e))
+        
+
+    except:
+            print("---Not posible to get Bestpreis---")
 
     return pricesFloat
+
+    
+
 
 
 
