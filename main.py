@@ -115,7 +115,12 @@ def changeDone(driver):
 
 
 def setDate(driver, month, day):
-
+    """
+    Change Date
+    :param driver: driver
+    :param month: month in int
+    :param day: day in int
+    """
 
     monthNow = datetime.now().date().month
 
@@ -143,6 +148,12 @@ def setDate(driver, month, day):
 
 
 def setDeparture(driver, city):
+    """
+    Set Departure
+    :param driver: driver
+    :param city: city in String
+    """
+
 
     departure_Box = driver.find_element(by=By.CLASS_NAME, value="db-web-autocomplete.quick-finder-basic__stations-von-halt.test-von-halt").find_element(By.CSS_SELECTOR, "input")
     
@@ -156,6 +167,12 @@ def setDeparture(driver, city):
 
 
 def setDestination(driver, city):
+    """
+    Set Destination
+    :param driver: driver
+    :param city: city in String
+    """
+
 
     destination_Box = driver.find_element(by=By.CLASS_NAME, value="db-web-autocomplete.quick-finder-basic__stations-nach-halt.test-nach-halt").find_element(By.CSS_SELECTOR, "input")
       
