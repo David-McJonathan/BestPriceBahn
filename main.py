@@ -210,7 +210,13 @@ def getBestpreis(driver):
 
     prices = driver.find_elements(By.CLASS_NAME, "tagesbestpreis-intervall__button-text")
 
-    return prices
+    pricesFloat = []
+
+    for e in prices:
+        pricesFloat.append(convertElementToFloat(e))
+
+
+    return pricesFloat
 
 
 
@@ -223,7 +229,7 @@ def sendSQL(connection, depature, destination, tripDate, prices):
     :param destination: as String
     :param tripDate: as String
     :param checkDate: as String
-    :param preis: as int array
+    :param preis: as Float array
     """
 
     if len(prices) > 0:
@@ -242,8 +248,6 @@ def sendSQL(connection, depature, destination, tripDate, prices):
         print("(dummy) Sending to SQL-Database...")        
         print("(" + depature +") --> (" + destination + ")")
 
-        for e in prices:
-            print(convertElementToFloat(e))
 
         print("... Finish sending to SQL-Database")
 
