@@ -4,7 +4,8 @@ Find the best price for your next train ride
 ---
 ### Function
 Enter departure city. \
-Storage results in the database for the next 21 days for the cities of Munich, Cologne, Mainz and Frankfurt
+Get results for the next 21 days for the connection to Munich, Cologne, Mainz and Frankfurt \
+Results are stored in the database
 
 ---
 ### Webcrawling permitted or not permitted
